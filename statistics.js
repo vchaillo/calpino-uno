@@ -103,7 +103,7 @@ export function createStatistics({ $, escapeHTML, dialog, driverIdentity, state 
     const button = event.target.closest('[data-driver-id],[data-driver-name]');
     if (button) openProfile({ id: button.dataset.driverId, name: button.dataset.driverName });
   });
-  dialog.addEventListener('close', () => generation++);
+  dialog.addEventListener('close', () => {generation++;if(state.view==='statistics')render($('#search').value);});
   setInterval(async()=>{if(state.view!=='statistics'||document.hidden)return;const previous=snapshot?.generatedAt;try{await load();if(snapshot?.generatedAt!==previous && !dialog.open)render($('#search').value);}catch{}},300000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden && state.view==='statistics')render($('#search').value);});
   return { render, openProfile, load };

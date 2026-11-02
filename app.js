@@ -1,5 +1,5 @@
 import { createAccountStore } from './account-store.js?v=22';
-import { createTeams } from './teams.js?v=23';
+import { createTeams } from './teams.js?v=24';
 import { createViewLayout } from './view-layout.js?v=22';
 import { enableTableSorting } from './table-sort.js?v=16';
 import { trophyIcon } from './icons.js';
@@ -7,8 +7,8 @@ import { renderFlag } from './flags.js?v=12';
 import { renderAnnualCalendar } from './calendar.js';
 import { createCircuits } from './circuits.js?v=20';
 import { createCockpits } from './cockpit.js?v=23';
-import { createProfile } from './profile.js?v=23';
-import { createStatistics } from './statistics.js?v=23';
+import { createProfile } from './profile.js?v=24';
+import { createStatistics } from './statistics.js?v=24';
 import { teamColor, teamLogo } from './branding.js?v=23';
 const API = 'https://api.jolpi.ca/ergast/f1/';
 const CURRENT_YEAR = new Date().getFullYear();
