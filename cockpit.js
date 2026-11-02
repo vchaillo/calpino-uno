@@ -93,10 +93,5 @@ export function createCockpits({ initialYear, onYearChange }) {
     root.querySelectorAll('[data-year-picker]').forEach(button=>button.setAttribute('aria-label', `${MODELS.find(model=>model.id === button.closest('[data-cockpit]').dataset.cockpit).name} : choisir la saison ${year}`));
   }
   update(initialYear);
-  // Use the same navigation node in both layouts to preserve state and keyboard focus.
-  const mobile = window.matchMedia('(max-width: 640px)');
-  const tabs = document.querySelector('#tabs');
-  function positionTabs() { (mobile.matches ? document.querySelector('#mobile-tabs-slot') : document.querySelector('.toolbar')).append(tabs); }
-  positionTabs(); mobile.addEventListener('change', positionTabs);
   return { update };
 }

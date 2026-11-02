@@ -47,9 +47,9 @@ export function teamLogo(team, season) {
   let id = team?.constructorId || team?.id;
   if (id === 'rb' && Number(season) >= 2025) id='racing-bulls';
   if (id === 'sauber' && Number(season) >= 2024 && Number(season) <= 2025) id='kick-sauber';
-  const name = String(team?.name || 'Écurie non renseignée');
+  const name = String(team?.name || 'Constructeur non renseignée');
   const escaped = name.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   if (TEAM_LOGOS[id]) return `<img class="team-logo" src="assets/teams/${TEAM_LOGOS[id]}" alt="${escaped}" title="${escaped}" width="32" height="28" loading="lazy">`;
-  const initials=name==='Écurie non renseignée'?'—':name.split(/\s+/).slice(0,2).map(part=>part[0]).join('').toUpperCase();
+  const initials=name==='Constructeur non renseignée'?'—':name.split(/\s+/).slice(0,2).map(part=>part[0]).join('').toUpperCase();
   return `<span class="team-logo team-logo-fallback" title="${escaped}" aria-label="${escaped}">${initials}</span>`;
 }

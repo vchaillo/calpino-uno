@@ -1,15 +1,15 @@
 import { createAccountStore } from './account-store.js?v=22';
-import { createTeams } from './teams.js?v=21';
+import { createTeams } from './teams.js?v=23';
 import { createViewLayout } from './view-layout.js?v=22';
 import { enableTableSorting } from './table-sort.js?v=16';
 import { trophyIcon } from './icons.js';
 import { renderFlag } from './flags.js?v=12';
 import { renderAnnualCalendar } from './calendar.js';
 import { createCircuits } from './circuits.js?v=20';
-import { createCockpits } from './cockpit.js?v=20';
-import { createProfile } from './profile.js?v=22';
-import { createStatistics } from './statistics.js?v=20';
-import { teamColor, teamLogo } from './branding.js?v=21';
+import { createCockpits } from './cockpit.js?v=23';
+import { createProfile } from './profile.js?v=23';
+import { createStatistics } from './statistics.js?v=23';
+import { teamColor, teamLogo } from './branding.js?v=23';
 const API = 'https://api.jolpi.ca/ergast/f1/';
 const CURRENT_YEAR = new Date().getFullYear();
 const $ = (selector) => document.querySelector(selector);
@@ -95,7 +95,7 @@ function renderLoading() {
   const root = $('#results');
   if (renderedView !== state.view || !root.children.length) {
     if (['drivers','constructors'].includes(state.view) || layouts.get(state.view) === 'list' && state.view === 'races') {
-      const headers = state.view === 'races' ? ['Saison / round','Date','Grand Prix','Circuit','Pays','Vainqueur','Actions'] : state.view === 'constructors' ? ['Pos.','Écurie','Nationalité','Victoires','Points'] : ['Pos.','Pilote','Nationalité','Écurie','Victoires','Points'];
+      const headers = state.view === 'races' ? ['Saison / round','Date','Grand Prix','Circuit','Pays','Vainqueur','Actions'] : state.view === 'constructors' ? ['Pos.','Constructeur','Nationalité','Victoires','Points'] : ['Pos.','Pilote','Nationalité','Constructeur','Victoires','Points'];
       const count = state.view === 'drivers' ? state.drivers.length || 20 : state.view === 'constructors' ? state.constructors.length || 10 : state.races.length || 6;
       root.innerHTML = `<div class="table-wrap"><table><thead><tr>${headers.map(label=>`<th>${label}</th>`).join('')}</tr></thead><tbody>${Array.from({length:count},()=>`<tr>${headers.map(()=>'<td><span class="skeleton-line">Chargement</span></td>').join('')}</tr>`).join('')}</tbody></table></div>`;
     } else if (state.view === 'calendar') root.innerHTML = renderAnnualCalendar({year:state.year,races:[],escapeHTML,renderFlag});
@@ -109,10 +109,10 @@ function standingsTable(items, constructors = false) {
   const max = Math.max(1, ...items.map((item) => Number(item.points)));
   const filtered = items.filter((item) => `${constructors ? item.Constructor.name : fullName(item.Driver)} ${item.Constructors?.map((team) => team.name).join(' ') || ''}`.toLowerCase().includes(query));
   if (!filtered.length) return '<p class="empty">Aucun classement disponible pour cette sélection.</p>';
-  return `<div class="table-wrap"><table><thead><tr><th>Pos.</th><th>${constructors ? 'Écurie' : 'Pilote'}</th>${constructors ? '<th>Nationalité</th>' : '<th>Nationalité</th><th>Écurie</th>'}<th>Victoires</th><th>Points</th></tr></thead><tbody>${filtered.map((item) => `<tr style="--team-color:${teamColor(constructors ? item.Constructor : item.Constructors?.[0], state.year)}"><td>${Number(item.position) === 1 && state.year < CURRENT_YEAR ? trophyIcon : ''}${escapeHTML(item.position)}</td><td><strong>${constructors ? teamIdentity(item.Constructor, state.year) : driverIdentity(item.Driver, item.Constructors?.[0], state.year, false)}</strong></td>${constructors ? '' : `<td>${countryOnly(item.Driver.nationality)}</td>`}<td>${constructors ? `${countryOnly(item.Constructor.nationality)}` : `<span class="team-list">${(item.Constructors || []).map((team) => teamIdentity(team, state.year)).join('')}</span>`}</td><td>${escapeHTML(item.wins)}</td><td class="points"><strong>${escapeHTML(item.points)}</strong><span class="bar" style="width:${Number(item.points) / max * 100}%"></span></td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="table-wrap"><table><thead><tr><th>Pos.</th><th>${constructors ? 'Constructeur' : 'Pilote'}</th>${constructors ? '<th>Nationalité</th>' : '<th>Nationalité</th><th>Constructeur</th>'}<th>Victoires</th><th>Points</th></tr></thead><tbody>${filtered.map((item) => `<tr style="--team-color:${teamColor(constructors ? item.Constructor : item.Constructors?.[0], state.year)}"><td>${Number(item.position) === 1 && state.year < CURRENT_YEAR ? trophyIcon : ''}${escapeHTML(item.position)}</td><td><strong>${constructors ? teamIdentity(item.Constructor, state.year) : driverIdentity(item.Driver, item.Constructors?.[0], state.year, false)}</strong></td>${constructors ? '' : `<td>${countryOnly(item.Driver.nationality)}</td>`}<td>${constructors ? `${countryOnly(item.Constructor.nationality)}` : `<span class="team-list">${(item.Constructors || []).map((team) => teamIdentity(team, state.year)).join('')}</span>`}</td><td>${escapeHTML(item.wins)}</td><td class="points"><strong>${escapeHTML(item.points)}</strong><span class="bar" style="width:${Number(item.points) / max * 100}%"></span></td></tr>`).join('')}</tbody></table></div>`;
 }
 function render() {
-  const titles = { races: ['LE CALENDRIER', 'Les Grands Prix'], drivers: ['LE CHAMPIONNAT', 'Classement des pilotes'], constructors: ['LE CHAMPIONNAT', 'Classement des écuries'], calendar: ['LA SAISON EN UN COUP D’ŒIL', `Calendrier ${state.year}`], circuits: ['LES TRACÉS DE LA FORMULE 1', 'Circuits & records'], login: ['BIENVENUE DANS LE PADDOCK', 'Connexion'], profile: ['TON ESPACE PERSONNEL', 'Mon profil'], statistics: ['LES RECORDS DE LA FORMULE 1', 'Statistiques & carrières'], collection: ['TON HISTOIRE AVEC LA F1', 'Ma collection · toutes les saisons'] };
+  const titles = { races: ['LE CALENDRIER', 'Les Grands Prix'], drivers: ['LE CHAMPIONNAT', 'Classement des pilotes'], constructors: ['LE CHAMPIONNAT', 'Classement des constructeurs'], calendar: ['LA SAISON EN UN COUP D’ŒIL', `Calendrier ${state.year}`], circuits: ['LES TRACÉS DE LA FORMULE 1', 'Circuits & records'], login: ['BIENVENUE DANS LE PADDOCK', 'Connexion'], profile: ['TON ESPACE PERSONNEL', 'Mon profil'], statistics: ['LES RECORDS DE LA FORMULE 1', 'Statistiques & carrières'], collection: ['TON HISTOIRE AVEC LA F1', 'Ma collection · toutes les saisons'] };
   $('#section-label').textContent = titles[state.view][0]; $('#section-title').textContent = titles[state.view][1];
   document.body.classList.toggle('profile-view', ['profile','login'].includes(state.view));
   $('.profile-nav').setAttribute('aria-current', ['profile','login'].includes(state.view) ? 'page' : 'false');
@@ -163,7 +163,7 @@ async function showSession(race, session, token) {
     if (token !== state.detailGeneration) return;
     const record = data.RaceTable?.Races?.[0];
     const rows = record?.[session === 'qualifying' ? 'QualifyingResults' : session === 'sprint' ? 'SprintResults' : 'Results'] || [];
-    $('#session-results').innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr><th>Pos.</th><th>Pilote</th><th>Écurie</th>${session === 'qualifying' ? '<th>Q1</th><th>Q2</th><th>Q3</th>' : '<th>Grille</th><th>Tours</th><th>Temps / statut</th><th>Points</th>'}</tr></thead><tbody>${rows.map((row) => `<tr><td>${escapeHTML(row.position)}</td><td>${driverIdentity(row.Driver, row.Constructor, race.season, true, Number(row.position) === 1 && session !== 'qualifying')}</td><td>${teamIdentity(row.Constructor, race.season)}</td>${session === 'qualifying' ? ['Q1','Q2','Q3'].map((key) => `<td>${escapeHTML(row[key] || '—')}</td>`).join('') : `<td>${escapeHTML(row.grid)}</td><td>${escapeHTML(row.laps)}</td><td>${escapeHTML(row.Time?.time || row.status)}</td><td>${escapeHTML(row.points)}</td>`}</tr>`).join('')}</tbody></table></div>` : '<p class="empty">Aucune donnée publiée pour cette session. Les archives anciennes ne couvrent pas toutes les qualifications.</p>';
+    $('#session-results').innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr><th>Pos.</th><th>Pilote</th><th>Constructeur</th>${session === 'qualifying' ? '<th>Q1</th><th>Q2</th><th>Q3</th>' : '<th>Grille</th><th>Tours</th><th>Temps / statut</th><th>Points</th>'}</tr></thead><tbody>${rows.map((row) => `<tr><td>${escapeHTML(row.position)}</td><td>${driverIdentity(row.Driver, row.Constructor, race.season, true, Number(row.position) === 1 && session !== 'qualifying')}</td><td>${teamIdentity(row.Constructor, race.season)}</td>${session === 'qualifying' ? ['Q1','Q2','Q3'].map((key) => `<td>${escapeHTML(row[key] || '—')}</td>`).join('') : `<td>${escapeHTML(row.grid)}</td><td>${escapeHTML(row.laps)}</td><td>${escapeHTML(row.Time?.time || row.status)}</td><td>${escapeHTML(row.points)}</td>`}</tr>`).join('')}</tbody></table></div>` : '<p class="empty">Aucune donnée publiée pour cette session. Les archives anciennes ne couvrent pas toutes les qualifications.</p>';
   } catch (error) { if (token === state.detailGeneration) $('#session-results').innerHTML = `<p class="empty">${escapeHTML(error.message)} <button data-session="${session}">Réessayer</button></p>`; }
 }
 let selectedRace;
@@ -235,3 +235,11 @@ account.subscribe((data,reason)=>{
   if(reason==='auth' || reason==='collection' || layoutChanged || ['profile','login'].includes(state.view))render();
 });
 account.start();
+
+const navToggle=document.querySelector('#nav-toggle'),navigation=document.querySelector('#tabs');
+function closeNavigation(){document.body.classList.remove('navigation-open');navToggle.setAttribute('aria-expanded','false');}
+navToggle.addEventListener('click',()=>{const open=!document.body.classList.contains('navigation-open');document.body.classList.toggle('navigation-open',open);navToggle.setAttribute('aria-expanded',String(open));});
+navigation.addEventListener('click',event=>{if(event.target.closest('button'))closeNavigation();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape' && document.body.classList.contains('navigation-open')){closeNavigation();navToggle.focus();}});
+document.addEventListener('click',event=>{if(!event.target.closest('#tabs,#nav-toggle'))closeNavigation();});
+window.matchMedia('(min-width:1101px)').addEventListener('change',closeNavigation);

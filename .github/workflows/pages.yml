@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "30 5 * * *"
+    - cron: "17 * * * *"
   workflow_dispatch:
 permissions:
   contents: read
@@ -13,7 +13,17 @@ concurrency:
   group: pages
   cancel-in-progress: true
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.release.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: release
+        run: python3 scripts/check-statistics.py
   deploy:
+    needs: check
+    if: github.event_name != 'schedule' || needs.check.outputs.changed == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
