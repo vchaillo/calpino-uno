@@ -8,7 +8,7 @@ import { renderAnnualCalendar } from './calendar.js';
 import { createCircuits } from './circuits.js?v=20';
 import { createCockpits } from './cockpit.js?v=23';
 import { createProfile } from './profile.js?v=24';
-import { createStatistics } from './statistics.js?v=24';
+import { createStatistics } from './statistics.js?v=25';
 import { teamColor, teamLogo } from './branding.js?v=23';
 const API = 'https://api.jolpi.ca/ergast/f1/';
 const CURRENT_YEAR = new Date().getFullYear();

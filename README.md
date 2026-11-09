@@ -27,7 +27,7 @@ Personal lists synchronize through Firebase. Finish the console configuration an
 
 ## Career statistics
 
-The Statistics tab uses a compact snapshot adapted from [F1DB](https://github.com/f1db/f1db), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Attribution, source version and latest completed race date appear in the UI. The deployment regenerates the snapshot from the latest F1DB release on each push and when the hourly release check detects new data. No additional data license restrictions are introduced by this adaptation.
+The Statistics tab uses a compact snapshot adapted from [F1DB](https://github.com/f1db/f1db), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Attribution, source version and latest completed race date appear in the UI. The deployment regenerates the snapshot from the latest F1DB release on each push and when the weekly release check detects new data. No additional data license restrictions are introduced by this adaptation.
 
 Records: world titles, Grand Prix wins, poles (not merely grid position), sprint wins, podiums, fastest laps, race starts, completed laps, grand slams and win percentage (minimum 20 starts for records). Driver profiles include season-by-season statistics. Laps led are unavailable in this source and explicitly marked; completed laps are not presented as laps led. Raw points and win rates need era context.
 
@@ -87,7 +87,7 @@ Race list rows open race details by click or Enter/Space. Circuit names, driver 
 
 ## Statistics freshness and expanded records
 
-GitHub Actions checks the latest F1DB release every hour (minute 17 UTC; scheduled runs can be delayed by GitHub). It compares the upstream release tag with the deployed `data/statistics-meta.json`; scheduled deployments run only when that tag changes. Pushes and manual runs rebuild regardless. Statistics, constructor profiles and circuit records are generated together from the same release.
+GitHub Actions checks the latest F1DB release every Monday at midnight (Europe/Paris; scheduled runs can be delayed by GitHub). It compares the upstream release tag with the deployed `data/statistics-meta.json`; scheduled deployments run only when that tag changes. Pushes and manual runs rebuild regardless. Statistics, constructor profiles and circuit records are generated together from the same release.
 
 The statistics client revalidates its snapshot every five minutes while that tab is visible and when returning to the tab. Cache-busted requests prevent an old browser response from surviving a new deployment. A coverage warning compares the snapshot date against the selected season's latest Jolpica result. F1DB publication can follow Jolpica; the site displays that source delay instead of claiming immediate live updates.
 
